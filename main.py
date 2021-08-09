@@ -1,4 +1,4 @@
-import cv2
+from cv2 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import cvlib as cv
@@ -93,7 +93,8 @@ def obtener_nombres(dire):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Para obtener los frames de un video definido arriba
-    # res = obtener_frames()
+    print("Obteniendo capturas del video....")
+    #res = obtener_frames()
     # se recorren las imagenes obtenidas
     direc = 'tpCaps'
     see = input('¿Desea ver el analisis de cada imagen? 1-si 2-no')
