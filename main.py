@@ -7,10 +7,13 @@ from numpy.lib.polynomial import poly
 import os
 from shutil import rmtree
 
+conf = []
+
 
 def conteo_autos(path, bool):
     image = cv2.imread(path)
     box, label, count = cv.detect_common_objects(image)
+    conf.append(count)
     if bool == 1:
         output = draw_bbox(image, box, label, count)
         plt.imshow(output)
@@ -62,7 +65,7 @@ def recorrer_frames(dire, bool):
 
 
 def graficar_histograma(l_cant, l_fotos):
-    mean = sum(l_cant)/len(l_cant)
+    mean = sum(l_cant) / len(l_cant)
     plt.rcParams['figure.figsize'] = [14, 6]
     x = np.array(range(0, len(l_fotos)))
     y = np.array(l_cant)
@@ -90,11 +93,50 @@ def obtener_nombres(dire):
     return imagenes
 
 
+def graficar_confianza(l_fotos):
+    prom_imagen = []
+    for lis in conf:
+        #cant de autos y valor de confianza de cada uno
+        values = 0
+        cant = 0
+        prom = 0
+        for li in lis:
+            values += li
+            cant = cant + 1
+        #calculo el valor promedio de confianza para esa imagen
+        prom = values/cant
+        prom_imagen.append(prom)
+
+    #limito los numeros periodicos
+    aux = []
+    for i in prom_imagen:
+        aux.append(round(i, 4))
+
+    prom_imagen = aux
+
+    plt.rcParams['figure.figsize'] = [12, 6]
+    x = np.array(range(0, len(l_fotos)))
+    y = np.array(prom_imagen)
+    my_xticks = l_fotos
+    plt.xticks(x, my_xticks)
+    plt.yticks(y, prom_imagen)
+    plt.plot(x, y, color="skyblue")
+    plt.xlabel('Imagenes')
+    plt.ylabel('Confianza Promedio', labelpad=20)
+    plt.title('Confianza Promedio en cada imagen')
+
+    # specifying horizontal line type
+    plt.axhline(y=np.mean(prom_imagen), color='r', linestyle='-', label="Promedio de confianza")
+    plt.legend(("Confianza", "Promedio de confianza"))
+    plt.show()
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Para obtener los frames de un video definido arriba
     print("Obteniendo capturas del video....")
-    #res = obtener_frames()
+    # res = obtener_frames()
     # se recorren las imagenes obtenidas
     direc = 'tpCaps'
     see = input('¿Desea ver el analisis de cada imagen? 1-si 2-no')
@@ -102,4 +144,5 @@ if __name__ == '__main__':
     l_cant = recorrer_frames(direc, see_num)
     l_fotos = obtener_nombres(direc)
     graficar_histograma(l_cant, l_fotos)
-
+    graficar_confianza(l_fotos)
+    #print(conf)
