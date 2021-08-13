@@ -2,6 +2,10 @@
 
 ### En este proyecto se busca hacer un analisis de la congestion vehicular en semaforos, para esto se va a  tomar un video sobre autos esperando en un semaforo, del cual se van a obtener capturas del mismo y se van a analizar para saber la cantidad de autos en ese instante en un semaforo y ver si hay congestion.
 
+### En el siguiente link se puede observar el avance del proyecto:
+
+- https://docs.google.com/document/d/1l38NXei3tgTIS0bqYxbfOGpsHSui44s6nOawJZrjk3A/edit?usp=sharing
+
 Para poder ejecutar el codigo se debe utilizar un video de prueba, debido a los limites de github no se pudo agregar a este repositorio, pero se adjunta el link donde pueden encontrar el video que se utilizo par este experimento:
 
 - https://drive.google.com/file/d/149vc2a1uoh8v-FwiO6vMXUYl0DE3vI2X/view?usp=sharing
