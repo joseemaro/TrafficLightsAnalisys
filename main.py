@@ -191,7 +191,7 @@ def save_res(cont, dire):
             ax = utils.viz.plot_bbox(img, bounding_boxes[0], scores[0],
                                      class_IDs[0], class_names=net.classes)
             formato = '_x.jpg'
-            path_r = 'C:\\Users\\Emanuel\\Desktop\\PROC. IMAGENES\\final\\results\\' + str(cont) + formato
+            path_r = 'results\\' + str(cont) + formato
             arr = save_ax(ax, path_r)
 
     print('Proceso Finalizado.')
