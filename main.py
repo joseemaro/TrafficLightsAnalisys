@@ -1,5 +1,7 @@
+import numpy
 from cv2 import cv2
 import numpy as np
+
 np.random.seed(0)
 import matplotlib.pyplot as plt
 import os
@@ -42,7 +44,7 @@ def conteo_autos(path, bool, net):
         score = float(scores[0][i].asnumpy())
         if score < 0.5:
             break
-        #x, y, w, h = bbox = bounding_boxes[0][i].astype(int).asnumpy()
+        # x, y, w, h = bbox = bounding_boxes[0][i].astype(int).asnumpy()
         tag = "{}; {:.4f}".format(cname, score)
         print('Clase= ', cname, '- Score= ', score)
         if cname == 'car':
@@ -50,8 +52,8 @@ def conteo_autos(path, bool, net):
             confi = confi + score
             conf_total.append(score)
             # conf.append(score)
-        #cv2.rectangle(img, (x, y), (w, h), (0, 255, 0), 2)
-        #cv2.putText(img, tag, (x, y - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 1)
+        # cv2.rectangle(img, (x, y), (w, h), (0, 255, 0), 2)
+        # cv2.putText(img, tag, (x, y - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 1)
     '''
     cont_img[0] = cont_img[0]+1
     formato = '_x.jpg'
@@ -69,10 +71,12 @@ def save_ax(ax, filename, **kwargs):
     ax.figure.canvas.draw()
     trans = ax.figure.dpi_scale_trans.inverted()
     bbox = ax.bbox.transformed(trans)
-    plt.savefig(filename, dpi="figure", bbox_inches=bbox,  **kwargs)
+    plt.savefig(filename, dpi="figure", bbox_inches=bbox, **kwargs)
+    plt.close()
     ax.axis("on")
     im = plt.imread(filename)
     return im
+
 
 '''
 def conteo_autos(path, bool, net):
@@ -126,6 +130,7 @@ def guardar_res(path, net,cont):
     return arr
 '''
 
+
 def obtener_frames():
     # Crea un archivo para guardar el fotograma del video
     rmtree("tpCaps")
@@ -160,15 +165,16 @@ def recorrer_frames(dire, bool):
     cant_autos = []
     imagenes = []
     cont = 0
-    net = gcv.model_zoo.get_model('ssd_512_mobilenet1.0_voc', pretrained=True)
+    #net = gcv.model_zoo.get_model('ssd_512_mobilenet1.0_voc', pretrained=True)
+    net = gcv.model_zoo.get_model('yolo3_darknet53_voc', pretrained=True)
     print('X------------------------------X')
     print('Aplicando Modelo para deteccion de autos')
     for imagen in contenido:
         if os.path.isfile(os.path.join(dire, imagen)) and imagen.endswith('.jpg'):
             imagenes.append(imagen)
             c = conteo_autos(os.path.join(dire, imagen), bool, net)
-            #arr = guardar_res(os.path.join(dire, imagen), net, cont)
-            cont = cont+1
+            # arr = guardar_res(os.path.join(dire, imagen), net, cont)
+            cont = cont + 1
             cant_autos.append(c)
             print("Imagen = " + imagen + " - Cantidad autos= " + str(c))
             print('--------------------------------')
@@ -182,7 +188,7 @@ def save_res(cont, dire):
     print('X-------------------------------X')
     print('Guardando Resultados de la Deteccion en carpeta results...')
     for imagen in contenido:
-        cont_img[0] = cont_img[0]+1
+        cont_img[0] = cont_img[0] + 1
         cont = cont_img[0]
         if os.path.isfile(os.path.join(dire, imagen)) and imagen.endswith('.jpg'):
             path = os.path.join(dire, imagen)
@@ -196,25 +202,26 @@ def save_res(cont, dire):
 
     print('Proceso Finalizado.')
 
-def graficar_histograma(l_cant, l_fotos):
+
+def graficar_histograma(l_cant, l_fotos, di):
     mean = sum(l_cant) / len(l_cant)
     plt.rcParams['figure.figsize'] = [14, 6]
     x = np.array(range(0, len(l_fotos)))
     y = np.array(l_cant)
     my_xticks = l_fotos
-    plt.xticks(x, my_xticks)
-    plt.yticks(y, l_cant)
+    #plt.xticks(x, my_xticks)
+    #plt.yticks(y, l_cant)
     plt.plot(x, y, color="skyblue")
     plt.xlabel('Imagenes')
     plt.ylabel('Cantidad autos')
-    plt.title('Congestion vehicular en semaforos')
+    plt.title('Congestion vehicular en semaforos ' + di)
     # specifying horizontal line type
     plt.axhline(y=mean, color='r', linestyle='-', label="Promedio de autos")
     plt.legend(("Cantidad de autos", "Promedio de autos"))
     plt.show()
 
 
-def graficar_histograma_confianza(l_cant):
+def graficar_histograma_confianza(l_cant, di):
     mean = sum(l_cant) / len(l_cant)
     plt.rcParams['figure.figsize'] = [14, 6]
     x = np.array(range(0, len(l_cant)))
@@ -225,7 +232,7 @@ def graficar_histograma_confianza(l_cant):
     plt.plot(x, y, color="skyblue")
     plt.xlabel('Autos')
     plt.ylabel('Confianza')
-    plt.title('Confianza de la prediccion de cada auto')
+    plt.title('Confianza de la prediccion de cada auto ' + di)
     # specifying horizontal line type
     plt.axhline(y=mean, color='r', linestyle='-', label="Promedio de confianza")
     plt.legend(("Confianza", "Promedio de confianza"))
@@ -280,7 +287,7 @@ def graficar_confianza(l_fotos):
     plt.show()'''
 
 
-def graficar_confianza(l_fotos):
+def graficar_confianza(l_fotos, di):
     prom_imagen = []
     values = 0
     cant = 0
@@ -300,19 +307,19 @@ def graficar_confianza(l_fotos):
     x = np.array(range(0, len(l_fotos)))
     y = np.array(prom_imagen)
     my_xticks = l_fotos
-    plt.xticks(x, my_xticks)
+    #plt.xticks(x, my_xticks)
     # plt.yticks(y, prom_imagen)
     plt.plot(x, y, color="skyblue")
     plt.xlabel('Imagenes')
     plt.ylabel('Confianza Promedio', labelpad=20)
-    plt.title('Confianza Promedio en cada imagen')
+    plt.title('Confianza Promedio en cada imagen ' + di)
     # specifying horizontal line type
     plt.axhline(y=np.mean(prom_imagen), color='r', linestyle='-', label="Promedio de confianza")
     plt.legend(("Confianza", "Promedio de confianza"))
     plt.show()
 
 
-def graficar_barras_conf():
+def graficar_barras_conf(direc):
     ## Declaramos valores para el eje x
     eje_x = ['1-0.99', '0.98-0.95', '0.94-0.9', '0.89-08', '0.79-0.7', '0.69-0']
     ## Declaramos valores para el eje y
@@ -339,31 +346,77 @@ def graficar_barras_conf():
     ## Legenda en el eje x
     plt.xlabel('Confianza')
     ## Título de Gráfica
-    plt.title('Grafico de barras de confianza')
+    plt.title('Grafico de barras de confianza ' + direc)
     ## Mostramos Gráfica
     plt.show()
 
 
-# Press the green button in the gutter to run the script.
+def graficar_barras_cant(cant_autos_h, direcciones):
+    ## Creamos Gráfica
+    plt.bar(direcciones, cant_autos_h)
+    ## Legenda en el eje y
+    plt.ylabel('Cantidad de autos')
+    ## Legenda en el eje x
+    plt.xlabel('Horario')
+    ## Título de Gráfica
+    plt.title('Cantidad de autos en cada horario')
+    ## Mostramos Gráfica
+    plt.show()
+
+
+def graficar_barras_conf_h(conf_h_prom, direcciones):
+    ## Creamos Gráfica
+    plt.bar(direcciones, conf_h_prom)
+    ## Legenda en el eje y
+    plt.ylabel('Confianza Promedio')
+    ## Legenda en el eje x
+    plt.xlabel('Horario')
+    ## Título de Gráfica
+    plt.title('Promedio de confianza en cada horario')
+    ## Mostramos Gráfica
+    plt.show()
+
+
 if __name__ == '__main__':
     # Para obtener los frames de un video definido arriba
     print("Obteniendo capturas del video....")
     # res = obtener_frames()
+    conf_h_prom = [0, 0, 0]
+    cant_autos_h = [0, 0, 0]
 
+    cont_h = 0
     # se recorren las imagenes obtenidas
-    direc = 'tpCaps'
-    # see = input('¿Desea ver el analisis de cada imagen? 1-si 2-no')
-    see = 2
-    see_num = int(see)
-    l_cant = recorrer_frames(direc, see_num)
-    #obtiene nombre de cada foto
-    l_fotos = obtener_nombres(direc)
+    direcciones = ['caps_ma', 'caps_me', 'caps_ta']
+    for i in direcciones:
+        conf = []
+        conf_total = []
+        direc = i
+        # see = input('¿Desea ver el analisis de cada imagen? 1-si 2-no')
+        see = 2
+        see_num = int(see)
+        l_cant = recorrer_frames(direc, see_num)
 
-    print('X---------------X')
-    print('Graficando....')
-    graficar_confianza(l_fotos)
-    graficar_histograma_confianza(conf_total)
-    graficar_barras_conf()
-    graficar_histograma(l_cant, l_fotos)
-    print('X---------------X')
-    save_res(cont_img[0], direc)
+        suma = 0
+        for valor in l_cant:
+            suma = suma + valor
+
+        cant_autos_h[cont_h] = cant_autos_h[cont_h] + suma
+        conf_h_prom[cont_h] = conf_h_prom[cont_h] + numpy.mean(conf_total)
+
+        # obtiene nombre de cada foto
+        l_fotos = obtener_nombres(direc)
+
+        print('X---------------X')
+        print('Graficando....')
+        graficar_confianza(l_fotos, direcciones[cont_h])
+        graficar_histograma_confianza(conf_total, direcciones[cont_h])
+        graficar_barras_conf(direcciones[cont_h])
+        graficar_histograma(l_cant, l_fotos, direcciones[cont_h])
+        print('X---------------X')
+        # save_res(cont_img[0], direc)
+        cont_h = cont_h + 1
+
+    graficar_barras_cant(cant_autos_h, direcciones)
+    graficar_barras_conf_h(conf_h_prom, direcciones)
+    print(conf_h_prom)
+    print('fin.')
